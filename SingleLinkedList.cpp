@@ -46,7 +46,6 @@ class SingleLinkedList {
 		}
 
 		BasicIterator& operator++() noexcept {
-			assert(node_ != nullptr);
 			node_ = node_->next_node;
 			return *this;
 		}
@@ -57,11 +56,9 @@ class SingleLinkedList {
 		}
 
 		[[nodiscard]] reference operator*() const noexcept {
-			assert(node_ != nullptr);
 			return node_->value;
 		}
 		[[nodiscard]] pointer operator->() const noexcept {
-			assert(node_ != nullptr);
 			return &node_->value;
 		}
 	private:
@@ -79,20 +76,21 @@ public:
 		head_.next_node = nullptr;
 	}
 	SingleLinkedList(const SingleLinkedList& other) {
-		Assign(other);
+		assert(size_ == 0 && head_.next_node == nullptr);
+		SingleLinkedList tmp;
+		for (auto obj : other) {
+			tmp.PushBack(obj);
+		}
+		swap(tmp);
 	}
 	SingleLinkedList(std::initializer_list<Type> values) {
-		Node* current = &head_;
-		for (const auto& value : values) {
-			current->next_node = new Node(value, nullptr);
-			current = current->next_node;
-			++size_;
+		for (Type value : values) {
+			this->PushBack(value);
 		}
 	}
 	SingleLinkedList& operator=(const SingleLinkedList& rhs) {
-		if (this != &rhs) {
-			Assign(rhs);
-		}
+		SingleLinkedList tmp = rhs;
+		this->swap(tmp);
 		return *this;
 	}
 	~SingleLinkedList() {
@@ -150,7 +148,6 @@ public:
 	}
 
 	void PopFront() noexcept {
-		assert(size_ > 0);
 		auto next_node = head_.next_node->next_node;
 		delete head_.next_node;
 		head_.next_node = next_node;
@@ -200,21 +197,6 @@ public:
 private:
 	Node head_;
 	size_t size_ = 0;
-
-	void Assign(const SingleLinkedList& other) {
-		Clear();
-		Node* current = &head_;
-		try {
-			for (const auto& value : other) {
-				current->next_node = new Node(value, nullptr);
-				current = current->next_node;
-			}
-			size_ = other.size_;
-		}
-		catch (...) {
-			Clear();
-		}
-	}
 };
 
 template <typename Type>
