@@ -77,20 +77,16 @@ public:
 	}
 	SingleLinkedList(const SingleLinkedList& other) {
 		assert(size_ == 0 && head_.next_node == nullptr);
-		SingleLinkedList tmp;
-		for (auto obj : other) {
-			tmp.PushBack(obj);
-		}
-		swap(tmp);
+		Assign(other);
 	}
 	SingleLinkedList(std::initializer_list<Type> values) {
-		for (Type value : values) {
-			this->PushBack(value);
-		}
+		Assign(values);
 	}
 	SingleLinkedList& operator=(const SingleLinkedList& rhs) {
-		SingleLinkedList tmp = rhs;
-		this->swap(tmp);
+		if (this != &rhs) {
+			SingleLinkedList tmp = rhs;
+			this->swap(tmp);
+		}
 		return *this;
 	}
 	~SingleLinkedList() {
@@ -197,6 +193,21 @@ public:
 private:
 	Node head_;
 	size_t size_ = 0;
+
+	template <typename object>
+	void Assign(const object& other) {
+		Node* current = &head_;
+		try {
+			for (const auto& value : other) {
+				current->next_node = new Node(value, nullptr);
+				current = current->next_node;
+				++size_;
+			}
+		}
+		catch (...) {
+			throw;
+		}
+	}
 };
 
 template <typename Type>
