@@ -80,6 +80,7 @@ public:
 	}
 	SingleLinkedList(const SingleLinkedList& other) {
 		assert(size_ == 0 && head_.next_node == nullptr);
+		Node* current = &head_;
 		for (const auto& value : other) {
 			current->next_node = new Node(value, nullptr);
 			current = current->next_node;
@@ -87,10 +88,11 @@ public:
 		size_ = other.size_;
 	}
 	SingleLinkedList(std::initializer_list<Type> values) {
+		Node* current = &head_;
 		for (const auto& value : values) {
 			current->next_node = new Node(value, nullptr);
 			current = current->next_node;
-			++size;
+			++size_;
 		}
 	}
 	SingleLinkedList& operator=(const SingleLinkedList& rhs) {
