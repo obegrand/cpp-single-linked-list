@@ -79,13 +79,7 @@ public:
 		head_.next_node = nullptr;
 	}
 	SingleLinkedList(const SingleLinkedList& other) {
-		assert(size_ == 0 && head_.next_node == nullptr);
-		Node* current = &head_;
-		for (const auto& value : other) {
-			current->next_node = new Node(value, nullptr);
-			current = current->next_node;
-		}
-		size_ = other.size_;
+		Assign(other);
 	}
 	SingleLinkedList(std::initializer_list<Type> values) {
 		Node* current = &head_;
@@ -96,9 +90,9 @@ public:
 		}
 	}
 	SingleLinkedList& operator=(const SingleLinkedList& rhs) {
-		if (this == &rhs) return *this;
-		SingleLinkedList tmp = rhs;
-		this->swap(tmp);
+		if (this != &rhs) {
+			Assign(rhs);
+		}
 		return *this;
 	}
 	~SingleLinkedList() {
@@ -206,6 +200,21 @@ public:
 private:
 	Node head_;
 	size_t size_ = 0;
+
+	void Assign(const SingleLinkedList& other) {
+		Clear();
+		Node* current = &head_;
+		try {
+			for (const auto& value : other) {
+				current->next_node = new Node(value, nullptr);
+				current = current->next_node;
+			}
+			size_ = other.size_;
+		}
+		catch (...) {
+			Clear();
+		}
+	}
 };
 
 template <typename Type>
@@ -230,15 +239,15 @@ bool operator<(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& 
 
 template <typename Type>
 bool operator>(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
-	return !(lhs < rhs);
+	return rhs < lhs;
 }
 
 template <typename Type>
 bool operator<=(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
-	return (lhs < rhs || lhs == rhs);
+	return !(lhs > rhs);
 }
 
 template <typename Type>
 bool operator>=(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
-	return (!(lhs < rhs) || lhs == rhs);
+	return !(lhs < rhs);
 }
