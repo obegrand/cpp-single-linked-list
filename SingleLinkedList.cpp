@@ -46,6 +46,7 @@ class SingleLinkedList {
 		}
 
 		BasicIterator& operator++() noexcept {
+			assert(node_ != nullptr);
 			node_ = node_->next_node;
 			return *this;
 		}
@@ -56,9 +57,11 @@ class SingleLinkedList {
 		}
 
 		[[nodiscard]] reference operator*() const noexcept {
+			assert(node_ != nullptr);
 			return node_->value;
 		}
 		[[nodiscard]] pointer operator->() const noexcept {
+			assert(node_ != nullptr);
 			return &node_->value;
 		}
 	private:
@@ -144,6 +147,7 @@ public:
 	}
 
 	void PopFront() noexcept {
+		assert(size_ > 0);
 		auto next_node = head_.next_node->next_node;
 		delete head_.next_node;
 		head_.next_node = next_node;
@@ -197,15 +201,10 @@ private:
 	template <typename object>
 	void Assign(const object& other) {
 		Node* current = &head_;
-		try {
-			for (const auto& value : other) {
-				current->next_node = new Node(value, nullptr);
-				current = current->next_node;
-				++size_;
-			}
-		}
-		catch (...) {
-			throw;
+		for (const auto& value : other) {
+			current->next_node = new Node(value, nullptr);
+			current = current->next_node;
+			++size_;
 		}
 	}
 };
